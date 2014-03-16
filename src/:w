@@ -1,0 +1,94 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<fstream>
+#include<map>
+#include<math.h>
+#include<set>
+
+using namespace std;
+map <string ,map<string,string> > dict;
+//map <string ,map<string,string> >:: iterator it1;
+//map <string,string>:: iterator it2;
+set < pair<int,string> > S;
+set <pair <int,string> >::iterator it1;
+string sub,prev;
+
+
+int getNum(string s)
+{
+    int num=0;
+    int j=s.size()-1;
+    for(int i=0;i<s.size();i++)
+    {
+        num+=(s[i]-'0')*pow(10,j);
+        j--;
+    }
+    return num;
+}
+
+
+void flushDict()
+{
+    ofstream outfile;
+    outfile.open("open.txt",ios::app|ios::out);
+    /*for(it1=dict.begin();it1!=dict.end();it1++)
+    {
+        outfile<<it1->first<<" ";
+        for(it2=(it1->second).begin();it2!=(it1->second).end();it2++)
+        {
+        outfile<<it2->first<<":"<<it2->second<<",";
+        }
+        outfile<<endl;
+        }
+        outfile.close();*/
+    outfile<<sub<<" ";
+//    cout<<sub<<"  ";
+    for(it1=S.begin();it1!=S.end();it1++)
+    {
+        outfile<<it1->first<<":"<<it1->second<<",";
+  //      cout<<it1->first<<":"<<it1->second<<",";
+    }
+    outfile<<endl;
+    //cout<<endl;
+   // S.clear();
+    outfile.close();
+}
+
+
+
+int main()
+{
+    string line;
+    bool firstFlag=true;
+
+    ifstream infile("mySort.txt");
+    while(getline(infile,line))
+    {
+        size_t found=line.find(":");
+        sub=line.substr(0,found);
+        size_t dash=line.find("-");
+        string newSub=line.substr(dash+1,line.size()-dash);
+        dash=newSub.find("-");
+        found=newSub.find(":");
+        if(prev!=sub)
+        {
+            flushDict();
+            S.clear();
+            S.insert(make_pair(getNum(newSub.substr(dash+1,newSub.size()-dash)),newSub.substr(found+1,dash-found-1)));
+            /*if(firstFlag)
+            {
+                flushDict();
+                S.clear();
+                firstFlag=false;
+            }*/
+            prev=sub;
+        }
+        else
+        {
+            S.insert(make_pair(getNum(newSub.substr(dash+1,newSub.size()-dash)),newSub.substr(found+1,dash-found-1)));
+        }
+    }
+    infile.close();
+}
+
